@@ -1,4 +1,5 @@
 import time
+import pretty_errors
 
 def timed(func):
     """Decorator to print the execution time of a function."""
