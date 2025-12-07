@@ -1,5 +1,34 @@
+import argparse
 import sys
 import os
+import time
+import sys
+
+# Try to import colorama for better cross-platform terminal control
+try:
+    import colorama
+    from colorama import Cursor
+    colorama.init()
+    HAS_COLORAMA = True
+except ImportError:
+    HAS_COLORAMA = False
+    print("Install colorama for better visualization: pip install colorama")
+
+# ANSI color codes
+
+
+class Colors:
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    CYAN = '\033[96m'
+    WHITE = '\033[97m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+
+
 try:
     from solutions import *
 except ImportError:
@@ -16,12 +45,15 @@ except ImportError:
         os.path.dirname(__file__), '..', '..')))
     from tools.timed import timed
 
-import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', action='store_true',
                     help='Use demo.txt instead of input.txt')
 parser.add_argument('--verbose', action='store_true',
                     help='Enable verbose output')
+parser.add_argument('--visualize', action='store_true',
+                    help='Show real-time grid visualization')
+parser.add_argument('--delay', type=float, default=0.5,
+                    help='Delay between visualization updates (seconds)')
 args = parser.parse_args()
 base_dir = os.path.dirname(os.path.abspath(__file__))
 demo_path = os.path.join(base_dir, "demo.txt")
@@ -103,12 +135,52 @@ class Grid:
                 if self.get_cell(x, y) == self.MARKED:
                     self.empty_cell(x, y)
 
+    def display(self, clear=True, round_num=0, rollable_count=0, total_rolled=0):
+        if args.visualize:
+            if clear:
+                if HAS_COLORAMA:
+                    # Move cursor to home position and clear from cursor to end of screen
+                    print('\033[H\033[J', end='')
+                else:
+                    os.system('cls' if os.name == 'nt' else 'clear')
+
+            # Header with round info
+            print(
+                f"{Colors.BOLD}{Colors.CYAN}═══ Advent of Code 2025 - Day 4 ═══{Colors.RESET}")
+            if round_num > 0:
+                print(
+                    f"{Colors.YELLOW}Round: {round_num} | This round: {rollable_count} | Total: {total_rolled}{Colors.RESET}")
+            print()
+
+            # Display grid with colors
+            for row in self.grid:
+                line = ""
+                for cell in row:
+                    if cell == self.ROLL:
+                        line += f"{Colors.GREEN}{cell}{Colors.RESET}"
+                    elif cell == self.MARKED:
+                        line += f"{Colors.RED}{cell}{Colors.RESET}"
+                    elif cell == self.EMPTY:
+                        line += f"{Colors.WHITE}{cell}{Colors.RESET}"
+                    else:
+                        line += cell
+                print(line)
+
+            print(f"\n{Colors.BLUE}Grid: {self.width}x{self.height}{Colors.RESET}")
+            print(f"{Colors.GREEN}@ = Rollable{Colors.RESET} | {Colors.RED}x = Marked{Colors.RESET} | {Colors.WHITE}. = Empty{Colors.RESET}")
+
+            sys.stdout.flush()  # Ensure immediate output
+            time.sleep(args.delay)
+
 # Part One
 
 
 @timed
 def part_one(grid: Grid):
     sum_rollable = 0
+
+    if args.visualize:
+        grid.display(round_num=1, rollable_count=0, total_rolled=0)
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -117,6 +189,10 @@ def part_one(grid: Grid):
                 if args.verbose:
                     print(f"Rollable cell found at ({x}, {y})")
                 sum_rollable += 1
+
+    if args.visualize:
+        grid.display(round_num=1, rollable_count=sum_rollable,
+                     total_rolled=sum_rollable)
 
     if args.debug and SOLUTION_DEMO_PART_ONE is not None:
         assert sum_rollable == SOLUTION_DEMO_PART_ONE, f"Expected {SOLUTION_DEMO_PART_ONE} rollable cells, but found {sum_rollable}"
@@ -131,19 +207,35 @@ def part_one(grid: Grid):
 def part_two(grid: Grid):
     sum_rollable = 0
     rollable = 1
+    round_count = 0
+
+    if args.visualize:
+        grid.display(round_num=0, rollable_count=0, total_rolled=0)
 
     while rollable != 0:
         rollable = 0
+        round_count += 1
+        round_rollable = 0
+
         for y in range(grid.height):
             for x in range(grid.width):
                 if grid.is_rollable(x, y):
                     rollable += 1
+                    round_rollable += 1
                     grid.mark_cell(x, y)
                     if args.verbose:
                         print(f"Rollable cell found at ({x}, {y})")
                     sum_rollable += 1
 
+        if args.visualize:
+            grid.display(round_num=round_count,
+                         rollable_count=round_rollable, total_rolled=sum_rollable)
+
         grid.clean_up()
+
+        if args.visualize and rollable > 0:
+            grid.display(round_num=round_count,
+                         rollable_count=round_rollable, total_rolled=sum_rollable)
 
     if args.debug and SOLUTION_DEMO_PART_TWO is not None:
         assert sum_rollable == SOLUTION_DEMO_PART_TWO, f"Expected {SOLUTION_DEMO_PART_TWO} rollable cells, but found {sum_rollable}"
