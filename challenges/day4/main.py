@@ -1,5 +1,13 @@
 import sys
 import os
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
 
 try:
     from tools.timed import timed
@@ -88,7 +96,7 @@ class Grid:
 
     def empty_cell(self, x, y):
         self.set_cell(x, y, self.EMPTY)
-        
+
     def clean_up(self):
         for y in range(self.height):
             for x in range(self.width):
@@ -101,8 +109,6 @@ class Grid:
 @timed
 def part_one(grid: Grid):
     sum_rollable = 0
-    if args.debug:
-        SOLUTION = 13
 
     for y in range(grid.height):
         for x in range(grid.width):
@@ -111,8 +117,11 @@ def part_one(grid: Grid):
                 if args.verbose:
                     print(f"Rollable cell found at ({x}, {y})")
                 sum_rollable += 1
-    if args.debug:
-        assert sum_rollable == SOLUTION, f"Expected {SOLUTION} rollable cells, but found {sum_rollable}"
+
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert sum_rollable == SOLUTION_DEMO_PART_ONE, f"Expected {SOLUTION_DEMO_PART_ONE} rollable cells, but found {sum_rollable}"
+    elif SOLUTION_PART_ONE is not None:
+        assert sum_rollable == SOLUTION_PART_ONE, f"Expected {SOLUTION_PART_ONE} rollable cells, but found {sum_rollable}"
 
     print(f"Part One: {sum_rollable}")
 
@@ -121,11 +130,8 @@ def part_one(grid: Grid):
 @timed
 def part_two(grid: Grid):
     sum_rollable = 0
-    if args.debug:
-        SOLUTION = 43
-
     rollable = 1
-    
+
     while rollable != 0:
         rollable = 0
         for y in range(grid.height):
@@ -136,12 +142,13 @@ def part_two(grid: Grid):
                     if args.verbose:
                         print(f"Rollable cell found at ({x}, {y})")
                     sum_rollable += 1
-        
+
         grid.clean_up()
-                    
-                    
-    if args.debug:
-        assert sum_rollable == SOLUTION, f"Expected {SOLUTION} rollable cells, but found {sum_rollable}"
+
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert sum_rollable == SOLUTION_DEMO_PART_TWO, f"Expected {SOLUTION_DEMO_PART_TWO} rollable cells, but found {sum_rollable}"
+    elif SOLUTION_PART_TWO is not None:
+        assert sum_rollable == SOLUTION_PART_TWO, f"Expected {SOLUTION_PART_TWO} rollable cells, but found {sum_rollable}"
 
     print(f"Part Two: {sum_rollable}")
 

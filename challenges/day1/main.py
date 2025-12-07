@@ -1,6 +1,14 @@
 import sys
 import os
-
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
+    
 try:
     from tools.timed import timed
 except ImportError:
@@ -40,17 +48,17 @@ with open(INPUT_FILE) as f:
 def part_one():
     starting_position = 50
     zero_moments = 0
-    if args.debug:
-        SOLUTION = 3
     for rotation in rotations:
         direction = rotation[0]
         distance = int(rotation[1:])
         starting_position = move_to(starting_position, direction, distance)
         if starting_position == 0:
             zero_moments += 1
-            
-    if args.debug:
-        assert zero_moments == SOLUTION, f"Expected {SOLUTION} zero moments, got {zero_moments}"
+
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert zero_moments == SOLUTION_DEMO_PART_ONE, f"Expected {SOLUTION_DEMO_PART_ONE} zero moments, got {zero_moments}"
+    elif SOLUTION_PART_ONE is not None:
+        assert zero_moments == SOLUTION_PART_ONE, f"Expected {SOLUTION_PART_ONE} zero moments, got {zero_moments}"
 
     print(f"Part One: {zero_moments}")
 
@@ -78,17 +86,17 @@ with open(INPUT_FILE) as f:
 def part_two():
     starting_position = 50
     zero_moments = 0
-    if args.debug:
-        SOLUTION = 6
     for rotation in rotations:
         direction = rotation[0]
         distance = int(rotation[1:])
         starting_position, zeros = move_to_part_two(
             starting_position, direction, distance)
         zero_moments += zeros
-    
-    if args.debug:
-        assert zero_moments == SOLUTION, f"Expected {SOLUTION} zero moments, got {zero_moments}"
+
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert zero_moments == SOLUTION_DEMO_PART_TWO, f"Expected {SOLUTION_DEMO_PART_TWO} zero moments, got {zero_moments}"
+    elif SOLUTION_PART_TWO is not None:
+        assert zero_moments == SOLUTION_PART_TWO, f"Expected {SOLUTION_PART_TWO} zero moments, got {zero_moments}"
 
     print(f"Part Two: {zero_moments}")
 

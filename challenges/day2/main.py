@@ -1,5 +1,14 @@
+import regex
 import sys
 import os
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
 
 try:
     from tools.timed import timed
@@ -19,6 +28,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 demo_path = os.path.join(base_dir, "demo.txt")
 input_path = os.path.join(base_dir, "input.txt")
 INPUT_FILE = demo_path if args.debug else input_path
+
 
 class Range:
     def __init__(self, start: int, end: int) -> None:
@@ -52,8 +62,6 @@ def silly_id(code):
 @timed
 def part_one():
     invalid_ids = []
-    if args.debug:
-        SOLUTION = 1227775554
     for r in ranges:
         printable = []
         for code in range(r.start, r.end + 1):
@@ -68,14 +76,38 @@ def part_one():
         if args.verbose and printable:
             print(f"{r}: {', '.join(map(str, printable))}")
 
-    if args.debug:
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
         assert sum(
-            invalid_ids) == SOLUTION, f"Expected sum to be {SOLUTION} but got {sum(invalid_ids)}"
+            invalid_ids) == SOLUTION_DEMO_PART_ONE, f"Expected sum to be {SOLUTION_DEMO_PART_ONE} but got {sum(invalid_ids)}"
+    elif SOLUTION_PART_ONE is not None:
+        assert sum(
+            invalid_ids) == SOLUTION_PART_ONE, f"Expected sum to be {SOLUTION_PART_ONE} but got {sum(invalid_ids)}"
 
     print(f"Part One: {sum(invalid_ids)}")
 
 
+@timed
+def part_one_regex():
+    invalid_sum = 0
+    pattern = r'^(\d+)\1$'
+
+    for r in ranges:
+        for code in range(r.start, r.end + 1):
+            code_str = str(code)
+            if args.verbose:
+                print(f"Checking {code_str}")
+            if regex.match(pattern, code_str):
+                invalid_sum += code
+
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert invalid_sum == SOLUTION_DEMO_PART_ONE, f"Expected sum to be {SOLUTION_DEMO_PART_ONE} but got {invalid_sum}"
+    elif SOLUTION_PART_ONE is not None:
+        assert invalid_sum == SOLUTION_PART_ONE, f"Expected sum to be {SOLUTION_PART_ONE} but got {invalid_sum}"
+
+    print(f"Part One: {invalid_sum}")
+
 # Part Two
+
 
 def split_to(code, parts):
     # create `parts` pairs from code
@@ -103,8 +135,6 @@ def silly_id_part_two(code):
 @timed
 def part_two():
     invalid_ids = []
-    if args.debug:
-        SOLUTION = 4174379265
     for r in ranges:
         printable = []
         for code in range(r.start, r.end + 1):
@@ -117,11 +147,34 @@ def part_two():
         if args.verbose and printable:
             print(f"{r}: {', '.join(map(str, printable))}")
 
-    if args.debug:
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
         assert sum(
-            invalid_ids) == SOLUTION, f"Expected sum to be {SOLUTION} but got {sum(invalid_ids)}"
+            invalid_ids) == SOLUTION_DEMO_PART_TWO, f"Expected sum to be {SOLUTION_DEMO_PART_TWO} but got {sum(invalid_ids)}"
+    elif SOLUTION_PART_TWO is not None:
+        assert sum(
+            invalid_ids) == SOLUTION_PART_TWO, f"Expected sum to be {SOLUTION_PART_TWO} but got {sum(invalid_ids)}"
 
     print(f"Part Two: {sum(invalid_ids)}")
+
+
+@timed
+def part_two_regex():
+    invalid_sum = 0
+    pattern = r'^(\d+)\1+$'
+
+    for r in ranges:
+        for code in range(r.start, r.end + 1):
+            code_str = str(code)
+            if args.verbose:
+                print(f"Checking {code_str}")
+            if regex.match(pattern, code_str):
+                invalid_sum += code
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert invalid_sum == SOLUTION_DEMO_PART_TWO, f"Expected sum to be {SOLUTION_DEMO_PART_TWO} but got {invalid_sum}"
+    elif SOLUTION_PART_TWO is not None:
+        assert invalid_sum == SOLUTION_PART_TWO, f"Expected sum to be {SOLUTION_PART_TWO} but got {invalid_sum}"
+
+    print(f"Part Two: {invalid_sum}")
 
 
 if __name__ == "__main__":

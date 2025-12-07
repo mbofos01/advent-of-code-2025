@@ -1,5 +1,13 @@
 import sys
 import os
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
 
 try:
     from tools.timed import timed
@@ -78,7 +86,6 @@ def part_one():
         print("Starting Part One")
         print("--" * 30)
     count = 0
-    SOLUTION = 3
     for num in ids:
         for r in ranges:
             if r.contains(Range(num, num)):
@@ -86,8 +93,12 @@ def part_one():
                 if args.verbose:
                     print(f"Number {num} is contained in range {r}")
                 break
-    if args.debug:
-        assert count == SOLUTION, f"Expected count to be {SOLUTION} but got {count}"
+
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert count == SOLUTION_DEMO_PART_ONE, f"Expected count to be {SOLUTION_DEMO_PART_ONE} but got {count}"
+    elif SOLUTION_PART_ONE is not None:
+        assert count == SOLUTION_PART_ONE, f"Expected count to be {SOLUTION_PART_ONE} but got {count}"
+
     print(f"Part One: {count}")
 
 
@@ -165,14 +176,15 @@ def part_two():
         print("Starting Part Two")
         print("--" * 30)
     solo_range = SoloRange()
-    SOLUTION = 14
 
     for r in ranges:
         solo_range.attach_range(r)
     total_covered = solo_range.find_containing_range()
 
-    if args.debug:
-        assert total_covered == SOLUTION, f"Expected total_covered to be {SOLUTION} but got {total_covered}"
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert total_covered == SOLUTION_DEMO_PART_TWO, f"Expected total_covered to be {SOLUTION_DEMO_PART_TWO} but got {total_covered}"
+    elif SOLUTION_PART_TWO is not None:
+        assert total_covered == SOLUTION_PART_TWO, f"Expected total_covered to be {SOLUTION_PART_TWO} but got {total_covered}"
 
     print(f"Part Two: {total_covered}")
 

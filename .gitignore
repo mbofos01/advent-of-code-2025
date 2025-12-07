@@ -181,4 +181,5 @@ cython_debug/
 .cursorindexingignore
 
 challenges/**/input.txt
+challenges/**/solutions.py
 challenges/**/puzzle.md

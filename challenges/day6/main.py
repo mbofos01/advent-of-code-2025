@@ -1,5 +1,13 @@
 import sys
 import os
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
 
 try:
     from tools.timed import timed
@@ -25,7 +33,6 @@ INPUT_FILE = demo_path if args.debug else input_path
 
 @timed
 def part_one():
-    SOLUTION = 4277556
     operations = len([item for item in lines[0].split() if item])
     operators = lines[-1].split()
     numbers = [[] for _ in range(operations)]
@@ -48,8 +55,10 @@ def part_one():
 
     sum_total = sum(results)
 
-    if args.debug:
-        assert sum_total == SOLUTION, f"Expected {SOLUTION}, got {sum_total}"
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert sum_total == SOLUTION_DEMO_PART_ONE, f"Expected {SOLUTION_DEMO_PART_ONE}, got {sum_total}"
+    elif SOLUTION_PART_ONE is not None:
+        assert sum_total == SOLUTION_PART_ONE, f"Expected {SOLUTION_PART_ONE}, got {sum_total}"
 
     print(f"Part One: {sum_total}")
 
@@ -58,7 +67,6 @@ def part_one():
 
 @timed
 def part_two():
-    SOLUTION = 3263827
     sum_total = 0
     operators = lines[-1].split()
     if args.verbose:
@@ -103,8 +111,10 @@ def part_two():
                 result *= val
             sum_total += result
 
-    if args.debug:
-        assert sum_total == SOLUTION, f"Expected {SOLUTION}, got {sum_total}"
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert sum_total == SOLUTION_DEMO_PART_TWO, f"Expected {SOLUTION_DEMO_PART_TWO}, got {sum_total}"
+    elif SOLUTION_PART_TWO is not None:
+        assert sum_total == SOLUTION_PART_TWO, f"Expected {SOLUTION_PART_TWO}, got {sum_total}"
 
     print(f"Part Two: {sum_total}")
 

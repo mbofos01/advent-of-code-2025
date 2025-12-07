@@ -1,5 +1,13 @@
 import sys
 import os
+try:
+    from solutions import *
+except ImportError:
+    SOLUTION_DEMO_PART_ONE = None
+    SOLUTION_PART_ONE = None
+    SOLUTION_DEMO_PART_TWO = None
+    SOLUTION_PART_TWO = None
+    print("No solutions.py found, skipping solution checks.")
 
 try:
     from tools.timed import timed
@@ -20,6 +28,7 @@ demo_path = os.path.join(base_dir, "demo.txt")
 input_path = os.path.join(base_dir, "input.txt")
 INPUT_FILE = demo_path if args.debug else input_path
 
+
 def find_joltage(bank: str, tail: int) -> int:
     for search in range(9, 0, -1):
         for index in range(len(bank) - tail):  # leave last digit
@@ -37,7 +46,6 @@ with open(INPUT_FILE, 'r') as f:
 def part_one():
     SUM = 0
     DIGITS = 2
-    SOLUTION = 357
 
     for bank in banks:
         if args.verbose:
@@ -60,8 +68,10 @@ def part_one():
 
         SUM += int(f"{bank[first_index]}{bank[second_index]}")
 
-    if args.debug:
-        assert SUM == SOLUTION, f"Expected SUM to be {SOLUTION} but got {SUM}"
+    if args.debug and SOLUTION_DEMO_PART_ONE is not None:
+        assert SUM == SOLUTION_DEMO_PART_ONE, f"Expected SUM to be {SOLUTION_DEMO_PART_ONE} but got {SUM}"
+    elif SOLUTION_PART_ONE is not None:
+        assert SUM == SOLUTION_PART_ONE, f"Expected SUM to be {SOLUTION_PART_ONE} but got {SUM}"
 
     print(f"Part One: {SUM}")
 
@@ -86,8 +96,6 @@ with open(INPUT_FILE, 'r') as f:
 def part_two():
     SUM = 0
     DIGITS = 12
-    if args.debug:
-        SOLUTION = 3121910778619
     for bank in banks:
         if args.verbose:
             print(f"Processing bank: {bank}")
@@ -96,8 +104,10 @@ def part_two():
             print(f"Max joltage for bank {bank}: {joltage_str}")
         SUM += int(joltage_str)
 
-    if args.debug:
-        assert SUM == SOLUTION, f"Expected SUM to be {SOLUTION} but got {SUM}"
+    if args.debug and SOLUTION_DEMO_PART_TWO is not None:
+        assert SUM == SOLUTION_DEMO_PART_TWO, f"Expected SUM to be {SOLUTION_DEMO_PART_TWO} but got {SUM}"
+    elif SOLUTION_PART_TWO is not None:
+        assert SUM == SOLUTION_PART_TWO, f"Expected SUM to be {SOLUTION_PART_TWO} but got {SUM}"
 
     print(f"Part Two: {SUM}")
 
